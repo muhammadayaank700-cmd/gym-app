@@ -13,6 +13,18 @@
     <p>early workings of the app</p>
 
     <hr>
+    <h3> log a new workouts</h3>
+    <form action = "/" method = "POST">
+        <label for = "workout_name">Workout Name:</label>
+        <input type = "text" id = "workout_name" name = "workout_name" required placeholder="eg squats">
+
+        <label for = "weight">Weight KG:</label>
+        <input type ="number" id = "weight" name = "weight" required placeholder="eg 96">
+        <button type = "submit">Add Workout</button>
+
+
+
+    </form>
     <h3> workouts logged</h3>
     <ul>
         <li> squat 100kg 5 reps</li>
