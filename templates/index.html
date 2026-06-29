@@ -29,7 +29,10 @@
     <h3> workouts logged</h3>
     <ul>
         {%for w in savedworkout%}
-            <li>{{w.name}} - {{w.weight}}Kg</li>
+            <li>
+                {{w.name}} - {{w.weight}}Kg
+                <a href = "/delete/{{w.id}}" style = "color: red; margin-left: 10px;">[DELETE]</a>
+            </li>
         {% endfor %}
 
 

@@ -1,5 +1,5 @@
 import sqlite3
-from flask import Flask , render_template , request , redirect
+from flask import Flask , render_template , request , redirect , url_for
 
 app = Flask(__name__)
 
@@ -31,14 +31,28 @@ def home():
 
     conn = sqlite3.connect("gym.db")
     cursor = conn.cursor()
-    cursor.execute("SELECT name , weight FROM workouts")
+    cursor.execute("SELECT id , name , weight FROM workouts")
     rows = cursor.fetchall()
     conn.close()
 
-    formatted_workouts = [{"name":row[0] , "weight":row[1]} for row in rows]
+    formatted_workouts = [{"id":row[0] , "name":row[1] , "weight":row[2]} for row in rows]
 
 
     return render_template("index.html", savedworkout = formatted_workouts)
-    
+
+@app.route("/delete/<int:workout_id>")
+def delete(workout_id):
+    conn = sqlite3.connect("gym.db")
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM workouts WHERE id = ?",(workout_id,))
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for("home"))
+
+
+
+
 if __name__ == "__main__":
     app.run(debug=True)
