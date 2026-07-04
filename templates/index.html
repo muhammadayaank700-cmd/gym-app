@@ -32,7 +32,9 @@
             <li>
                 {{w.name}} - {{w.weight}}Kg
                 <a href = "/delete/{{w.id}}" style = "color: red; margin-left: 10px;">[DELETE]</a>
+                <a href="/update/{{ w.id }}" style="color: blue; margin-left: 10px;">[Edit]</a>
             </li>
+
         {% endfor %}
 
 

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang ="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name = "viewport" content="width= device-width , initial-scale = 1.0">
+    <title> Edit workout</title>
+
+
+
+
+
+</head>
+
+
+<body>
+
+    <h1>Edit Workout</h1>
+
+    <form action="/update/{{workout.id}}" method = "POST">
+        <label for = "workout_name"> Workout Name:</label>
+        <input type = "text" id = "workout_name" name = "workout_name" value="{{workout.name}}"required>
+
+        <button type="submit">Save Changes</button>
+               
+
+
+
+
+    </form>
+    <br>
+    <a href="/">cancel and go back</a>
+
+
+
+
+</body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</html>

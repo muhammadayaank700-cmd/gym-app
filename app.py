@@ -51,7 +51,28 @@ def delete(workout_id):
 
     return redirect(url_for("home"))
 
+@app.route('/update/<int:workout_id>/' , methods = ["GET" , "POST"])
+def update(workout_id):
+    conn = sqlite3.connect("gym.db")
+    cursor = conn.cursor()
 
+    if request.method == "POST":
+        new_name = request.form.get("workout_name")
+        new_weight = request.form.get("weight")
+
+        cursor.execute("UPDATE workouts SET name = ? , weight = ? WHERE id =?",(new_name,new_weight,workout_id))
+        conn.commit()
+        conn.close()
+
+        return redirect(url_for("home"))
+    
+    cursor.execute("SELECT id , name , weight FROM workouts WHERE id = ?",(workout_id,))
+    row = cursor.fetchone()
+    conn.close()
+
+    workout_to_edit = {"id":row[0] , "name" :row[1] , "weight": row[2]}
+
+    return render_template("edit.html", workout=workout_to_edit)
 
 
 if __name__ == "__main__":
