@@ -1,60 +1,51 @@
 <!DOCTYPE html>
-<html lang="eng">
-
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name = "viewport" content="width = device-width,initial-scale=1.0">
-    <title> gym app</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gym Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+<body class="bg-light">
 
-<body>
-    <h1>My gym app</h1>
-    <p>early workings of the app</p>
+    <div class="container mt-5" style="max-width: 600px;">
+        <h1 class="text-center mb-4">🏋️ My Gym Tracker</h1>
+        
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Log a New Workout</h5>
+                <form action="/" method="POST">
+                    <div class="mb-3">
+                        <label for="workout_name" class="form-label">Workout Name</label>
+                        <input type="text" class="form-control" id="workout_name" name="workout_name" required placeholder="e.g., Squats">
+                    </div>
+                    <div class="mb-3">
+                        <label for="weight" class="form-label">Weight (kg)</label>
+                        <input type="number" class="form-control" id="weight" name="weight" required placeholder="e.g., 100">
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Add Workout</button>
+                </form>
+            </div>
+        </div>
 
-    <hr>
-    <h3> log a new workouts</h3>
-    <form action = "/" method = "POST">
-        <label for = "workout_name">Workout Name:</label>
-        <input type = "text" id = "workout_name" name = "workout_name" required placeholder="eg squats">
-
-        <label for = "weight">Weight KG:</label>
-        <input type ="number" id = "weight" name = "weight" required placeholder="eg 96">
-       
-        <button type = "submit">Add Workout</button>
-
-
-
-    </form>
-    <h3> workouts logged</h3>
-    <ul>
-        {%for w in savedworkout%}
-            <li>
-                {{w.name}} - {{w.weight}}Kg
-                <a href = "/delete/{{w.id}}" style = "color: red; margin-left: 10px;">[DELETE]</a>
-                <a href="/update/{{ w.id }}" style="color: blue; margin-left: 10px;">[Edit]</a>
-            </li>
-
-        {% endfor %}
-
-
-    </ul>
-
-
-
-
+        <h3 class="mb-3">Logged Workouts</h3>
+        <ul class="list-group shadow-sm">
+            {% for w in savedworkout %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span><strong>{{ w.name }}</strong> - {{ w.weight }}kg</span>
+                    
+                    <div>
+                        <a href="/update/{{ w.id }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <a href="/delete/{{ w.id }}" class="btn btn-sm btn-outline-danger">Delete</a>
+                    </div>
+                </li>
+            {% endfor %}
+            
+            {% if not savedworkout %}
+                <li class="list-group-item text-center text-muted">No workouts logged yet. Get to lifting!</li>
+            {% endif %}
+        </ul>
+    </div>
 
 </body>
-
-
-
-
-
-
-
-
-
-
-
-
 </html>
