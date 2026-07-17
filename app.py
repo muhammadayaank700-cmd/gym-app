@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Flask , render_template , request , redirect , url_for
-
+from datetime import date 
 app = Flask(__name__)
 
 def init_db():
@@ -23,9 +23,9 @@ def home():
         cursor = conn.cursor()
         workout = request.form.get("workout_name")
         weight = request.form.get("weight")
-        date = request.form.get("date")
+        current_date = date.today().strftime("%Y-%m-%d")
 
-        cursor.execute("INSERT INTO workouts (name, weight,date) VALUES (? , ?,?)",(workout,weight,date))
+        cursor.execute("INSERT INTO workouts (name, weight,date) VALUES (? , ?,?)",(workout,weight,current_date))
         conn.commit()
         conn.close()
         return redirect("/")
