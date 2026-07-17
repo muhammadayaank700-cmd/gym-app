@@ -7,7 +7,7 @@ def init_db():
     conn = sqlite3.connect("gym.db")
     cursor = conn.cursor()
 
-    cursor.execute(''' CREATE TABLE IF NOT EXISTS workouts(id INTEGER PRIMARY KEY AUTOINCREMENT , name TEXT NOT NULL , weight TEXT NOT NULL)''')
+    cursor.execute(''' CREATE TABLE IF NOT EXISTS workouts(id INTEGER PRIMARY KEY AUTOINCREMENT , name TEXT NOT NULL , weight TEXT NOT NULL , date TEXT NOT NULL)''')
     conn.commit()
     conn.close()
 
@@ -23,19 +23,20 @@ def home():
         cursor = conn.cursor()
         workout = request.form.get("workout_name")
         weight = request.form.get("weight")
+        date = request.form.get("date")
 
-        cursor.execute("INSERT INTO workouts (name, weight) VALUES (? , ?)",(workout,weight))
+        cursor.execute("INSERT INTO workouts (name, weight,date) VALUES (? , ?,?)",(workout,weight,date))
         conn.commit()
         conn.close()
         return redirect("/")
 
     conn = sqlite3.connect("gym.db")
     cursor = conn.cursor()
-    cursor.execute("SELECT id , name , weight FROM workouts")
+    cursor.execute("SELECT id , name , weight , date FROM workouts")
     rows = cursor.fetchall()
     conn.close()
 
-    formatted_workouts = [{"id":row[0] , "name":row[1] , "weight":row[2]} for row in rows]
+    formatted_workouts = [{"id":row[0] , "name":row[1] , "weight":row[2] , "date":row[3]} for row in rows]
 
 
     return render_template("index.html", savedworkout = formatted_workouts)
@@ -59,18 +60,19 @@ def update(workout_id):
     if request.method == "POST":
         new_name = request.form.get("workout_name")
         new_weight = request.form.get("weight")
+        new_date = request.form.get("date")
 
-        cursor.execute("UPDATE workouts SET name = ? , weight = ? WHERE id =?",(new_name,new_weight,workout_id))
+        cursor.execute("UPDATE workouts SET name = ? , weight = ? , date = ? WHERE id =?",(new_name,new_weight,new_date,workout_id))
         conn.commit()
         conn.close()
 
         return redirect(url_for("home"))
     
-    cursor.execute("SELECT id , name , weight FROM workouts WHERE id = ?",(workout_id,))
+    cursor.execute("SELECT id , name , weight , date FROM workouts WHERE id = ?",(workout_id,))
     row = cursor.fetchone()
     conn.close()
 
-    workout_to_edit = {"id":row[0] , "name" :row[1] , "weight": row[2]}
+    workout_to_edit = {"id":row[0] , "name" :row[1] , "weight": row[2] , "date" : row[3]}
 
     return render_template("edit.html", workout=workout_to_edit)
 
