@@ -1,4 +1,6 @@
 import psycopg2
+from flask import session
+from werkzeug.security import generate_password_hash , check_password_hash
 from flask import Flask , render_template , request , redirect , url_for
 from datetime import date 
 app = Flask(__name__)
@@ -78,6 +80,67 @@ def update(workout_id):
     workout_to_edit = {"id":row[0] , "name" :row[1] , "weight": row[2] , "date" : row[3]}
 
     return render_template("edit.html", workout=workout_to_edit)
+
+
+@app.route("/login", methods = ["GET","POST"])
+def login():
+    error = None
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        conn = psycopg2.connect("postgresql://neondb_owner:npg_rFMEqJk3gae9@ep-crimson-voice-zai9b3hf.c-2.eu-west-2.aws.neon.tech/neondb?sslmode=require")
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT id , password_hash FROM users WHERE username = %s",(username,))
+        user = cursor.fetchone()
+        
+        #if username in database
+        if user and check_password_hash(user[1],password):
+            session["user id"] = user[0]
+            session["username"]= username
+
+            conn.close()
+            return redirect("/")
+        else:
+            error = "Invalid username or password"
+        
+        conn.close()
+
+    return render_template("login.html",error=error)
+
+     
+
+
+@app.route("/register", methods = ["GET","POST"])
+def register():
+    error = None
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        conn = psycopg2.connect("postgresql://neondb_owner:npg_rFMEqJk3gae9@ep-crimson-voice-zai9b3hf.c-2.eu-west-2.aws.neon.tech/neondb?sslmode=require")
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT id FROM users WHERE username = %s",(username,))
+        existing_user = cursor.fetchone()
+
+        #checking if user exists
+        if existing_user:
+            error = " oops username already taken,choose something else"
+        else:
+            hashed_pw = generate_password_hash(password)
+            cursor.execute("INSERT INTO users (username ,password_hash) VALUES(%s , %s)",(username,hashed_pw))
+            conn.commit()
+            conn.close()
+
+            return redirect("/")
+
+        conn.close()
+
+        #get request
+    return render_template("register.html",error=error)
+
 
 
 if __name__ == "__main__":
