@@ -1,0 +1,47 @@
+{# Compact "Log a workout" form — fields match the current backend (name, weight) #}
+<div class="card-panel p-5 sm:p-6">
+    <div class="flex items-center gap-2 mb-4">
+        <i data-lucide="plus-circle" class="w-5 h-5 text-primary"></i>
+        <h2 class="text-lg font-semibold tracking-tight">Log a workout</h2>
+    </div>
+    <form action="/" method="POST" class="grid grid-cols-1 sm:grid-cols-4 gap-3 sm:gap-4 items-end">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="form-control sm:col-span-2">
+            <label class="label py-1" for="workout_name">
+                <span class="label-text text-sm font-medium">Exercise</span>
+            </label>
+            <input
+                type="text"
+                id="workout_name"
+                name="workout_name"
+                required
+                placeholder="e.g. Squat"
+                class="input input-bordered w-full min-h-11 bg-base-100 rounded-xl"
+            >
+        </div>
+
+        <div class="form-control">
+            <label class="label py-1" for="weight">
+                <span class="label-text text-sm font-medium">Weight (kg)</span>
+            </label>
+            <input
+                type="number"
+                id="weight"
+                name="weight"
+                min="0"
+                step="0.5"
+                required
+                placeholder="100"
+                class="input input-bordered w-full min-h-11 bg-base-100 rounded-xl"
+            >
+        </div>
+
+        <div class="form-control">
+            <button type="submit" class="btn btn-primary w-full min-h-11 rounded-xl gap-2">
+                <i data-lucide="check" class="w-4 h-4"></i>
+                Add workout
+            </button>
+        </div>
+    </form>
+</div>

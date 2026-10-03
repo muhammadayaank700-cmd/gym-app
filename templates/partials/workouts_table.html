@@ -1,0 +1,30 @@
+{# Workouts table — expects `savedworkout` #}
+<div id="workouts-table" class="space-y-3">
+    <h2 class="text-lg font-semibold tracking-tight flex items-center gap-2">
+        <i data-lucide="clipboard-list" class="w-5 h-5 text-primary"></i>
+        Logged workouts
+    </h2>
+{% if savedworkout %}
+<div class="card-panel overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="table table-sm sm:table-md">
+            <thead>
+                <tr class="border-base-300 text-base-content/50">
+                    <th>Exercise</th>
+                    <th>Weight</th>
+                    <th>Date</th>
+                    <th class="text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="workouts-tbody">
+                {% for w in savedworkout %}
+                    {% include "partials/workout_row.html" %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+    {% include "partials/empty_state.html" %}
+{% endif %}
+</div>

@@ -1,0 +1,27 @@
+{# Single workout table row — expects `w` #}
+<tr id="workout-row-{{ w.id }}" class="hover:bg-base-300/40 transition-colors">
+    <td class="font-medium">{{ w.name }}</td>
+    <td>{{ w.weight }}<span class="text-base-content/40 text-sm ml-0.5">kg</span></td>
+    <td class="text-base-content/60 whitespace-nowrap">{{ w.date }}</td>
+    <td class="text-right">
+        <div class="inline-flex gap-1">
+            <a
+                href="/update/{{ w.id }}/"
+                class="btn btn-ghost btn-sm min-h-10 w-10 p-0 rounded-xl"
+                title="Edit"
+                aria-label="Edit {{ w.name }}"
+            >
+                <i data-lucide="pencil" class="w-4 h-4"></i>
+            </a>
+            <a
+                href="/delete/{{ w.id }}"
+                class="btn btn-ghost btn-sm min-h-10 w-10 p-0 rounded-xl text-error"
+                title="Delete"
+                aria-label="Delete {{ w.name }}"
+                onclick="return confirm('Delete this workout?')"
+            >
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </a>
+        </div>
+    </td>
+</tr>

@@ -4,11 +4,13 @@ from dotenv import load_dotenv
 from flask import session
 from werkzeug.security import generate_password_hash , check_password_hash
 from flask import Flask , render_template , request , redirect , url_for
-from datetime import date 
+from flask_wtf.csrf import CSRFProtect
+from datetime import date, timedelta
 load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY")
+csrf = CSRFProtect(app)
 DB_URL = os.getenv("DATABASE_URL")
 
 
@@ -17,9 +19,7 @@ DB_URL = os.getenv("DATABASE_URL")
 def init_db():
     conn = psycopg2.connect(DB_URL)
     cursor = conn.cursor()
-    cursor.execute("DROP TABLE IF EXISTS workout CASCADE")   # Deletes the old singular table
-    cursor.execute("DROP TABLE IF EXISTS workouts CASCADE")  # Deletes the plural table
-    cursor.execute("DROP TABLE IF EXISTS users CASCADE")
+    
 
    
     
@@ -29,6 +29,32 @@ def init_db():
     conn.close()
 
 init_db()
+
+def compute_stats(workouts):
+    weights = []
+    for workout in workouts:
+        try:
+            weights.append(float(workout["weight"]))
+        except (TypeError, ValueError):
+            pass
+
+    week_start = date.today() - timedelta(days=7)
+    workouts_this_week = 0
+    for workout in workouts:
+        try:
+            logged = date.fromisoformat(str(workout["date"]))
+            if logged >= week_start:
+                workouts_this_week += 1
+        except (TypeError, ValueError):
+            pass
+
+    return {
+        "total_workouts": len(workouts),
+        "heaviest_lift": max(weights) if weights else 0,
+        "workouts_this_week": workouts_this_week,
+        "total_volume": sum(weights) if weights else 0,
+    }
+
 @app.route('/' , methods = ["GET" , "POST"])
 def home():
     
@@ -58,9 +84,9 @@ def home():
     conn.close()
 
     formatted_workouts = [{"id":row[0] , "name":row[1] , "weight":row[2] , "date":row[3]} for row in rows]
+    stats = compute_stats(formatted_workouts)
 
-
-    return render_template("index.html", savedworkout = formatted_workouts , username = session.get("username"))
+    return render_template("index.html", savedworkout = formatted_workouts , username = session.get("username"), stats = stats)
 
 @app.route("/delete/<int:workout_id>")
 def delete(workout_id):

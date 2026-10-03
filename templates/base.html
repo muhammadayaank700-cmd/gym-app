@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Gym Tracker{% endblock %}</title>
+
+    <!-- Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind + DaisyUI (CDN, no build step). Tailwind first so DaisyUI theme wins. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css" rel="stylesheet" type="text/css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        accent: {
+                            DEFAULT: '#39FF14',
+                            soft: '#22C55E',
+                            dim: '#16A34A',
+                        },
+                    },
+                    boxShadow: {
+                        soft: '0 8px 30px rgba(0, 0, 0, 0.25)',
+                    },
+                    keyframes: {
+                        'fade-in': {
+                            '0%': { opacity: '0', transform: 'translateY(6px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                    },
+                    animation: {
+                        'fade-in': 'fade-in 0.4s ease-out both',
+                    },
+                },
+            },
+        };
+    </script>
+
+    <!-- Dark theme with electric green primary (overrides DaisyUI dark) -->
+    <style>
+        :root,
+        [data-theme="dark"] {
+            color-scheme: dark;
+            --p: 84 100% 54%;
+            --pf: 84 100% 42%;
+            --pc: 0 0% 4%;
+            --rounded-box: 0.75rem;
+            --rounded-btn: 0.75rem;
+        }
+
+        html, body {
+            font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+            min-height: 100vh;
+            color: #e8eef7;
+            background:
+                radial-gradient(ellipse 80% 50% at 20% -10%, rgba(57, 255, 20, 0.12), transparent 50%),
+                radial-gradient(ellipse 60% 40% at 90% 10%, rgba(34, 197, 94, 0.08), transparent 45%),
+                #0b1220;
+        }
+
+        h1, h2, h3, .brand-title {
+            color: #f3f6fb;
+        }
+
+        .text-primary {
+            color: #39FF14 !important;
+        }
+
+        .btn-primary {
+            background-color: #39FF14 !important;
+            border: none;
+            color: #0a0a0a !important;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.05);
+            box-shadow: 0 8px 24px rgba(57, 255, 20, 0.25);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary:focus-visible,
+        .input:focus-visible,
+        .select:focus-visible,
+        .textarea:focus-visible {
+            outline: 2px solid #39FF14;
+            outline-offset: 2px;
+        }
+
+        .card-panel {
+            background: #121a2b;
+            border: 1px solid #1e293b;
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        /* Toast stack */
+        #toast-stack {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 60;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-width: min(22rem, calc(100vw - 2rem));
+        }
+    </style>
+
+    <script src="https://unpkg.com/lucide@0.469.0"></script>
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    {% block head %}{% endblock %}
+</head>
+<body class="font-sans text-base-content antialiased">
+    {% block shell %}
+    <!-- App chrome (hidden on auth pages via block override) -->
+    <div class="navbar bg-base-200/80 backdrop-blur-md border-b border-base-300 sticky top-0 z-40 px-4 sm:px-6">
+        <div class="flex-1">
+            <a href="/" class="btn btn-ghost gap-2 px-2 text-lg font-bold tracking-tight normal-case">
+                <i data-lucide="dumbbell" class="w-6 h-6 text-primary"></i>
+                <span>Gym Tracker</span>
+            </a>
+        </div>
+        <div class="flex-none">
+            {% if session.get('username') %}
+            <div class="dropdown dropdown-end">
+                <div tabindex="0" role="button" class="btn btn-ghost gap-2 min-h-11 px-3">
+                    <i data-lucide="user" class="w-5 h-5"></i>
+                    <span class="hidden sm:inline max-w-[10rem] truncate">{{ session.get('username') }}</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4 opacity-70"></i>
+                </div>
+                <ul tabindex="0" class="dropdown-content menu bg-base-200 rounded-xl border border-base-300 z-50 mt-2 w-52 p-2 shadow-soft">
+                    <li>
+                        <a href="/logout" class="text-error gap-2">
+                            <i data-lucide="log-out" class="w-4 h-4"></i>
+                            Log out
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endblock %}
+
+    <!-- Flash / error toasts -->
+    <div id="toast-stack" aria-live="polite">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert {% if category == 'error' %}alert-error{% elif category == 'success' %}alert-success{% else %}alert-info{% endif %} shadow-soft animate-fade-in">
+                    <span>{{ message }}</span>
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        {% block toasts %}{% endblock %}
+    </div>
+
+    <main class="{% block main_class %}container mx-auto px-4 sm:px-6 py-6 sm:py-8 animate-fade-in{% endblock %}">
+        {% block content %}{% endblock %}
+    </main>
+
+    {% block footer %}
+    <footer class="footer footer-center text-base-content/50 p-6 border-t border-base-300 mt-auto">
+        <aside>
+            <p class="text-sm">Gym Tracker — log lifts, track progress</p>
+        </aside>
+    </footer>
+    {% endblock %}
+
+    <script>
+        // Re-init Lucide icons on load and after htmx swaps
+        function refreshIcons() {
+            if (window.lucide) lucide.createIcons();
+        }
+        document.addEventListener('DOMContentLoaded', refreshIcons);
+        document.body.addEventListener('htmx:afterSwap', refreshIcons);
+
+        // Auto-dismiss toasts after a few seconds
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('#toast-stack .alert').forEach((el) => {
+                setTimeout(() => {
+                    el.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(-6px)';
+                    setTimeout(() => el.remove(), 300);
+                }, 4000);
+            });
+        });
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

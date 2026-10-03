@@ -1,0 +1,47 @@
+{# Stat cards row — expects `stats` dict #}
+<div id="stats-row" class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+    <div class="card-panel p-4 sm:p-5 transition hover:-translate-y-0.5">
+        <div class="flex items-center gap-3">
+            <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/15 text-primary shrink-0">
+                <i data-lucide="list-checks" class="w-5 h-5"></i>
+            </span>
+            <div class="min-w-0">
+                <p class="text-xs sm:text-sm text-base-content/50 truncate">Total workouts</p>
+                <p class="text-xl sm:text-2xl font-bold tracking-tight">{{ stats.total_workouts }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="card-panel p-4 sm:p-5 transition hover:-translate-y-0.5">
+        <div class="flex items-center gap-3">
+            <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/15 text-primary shrink-0">
+                <i data-lucide="trophy" class="w-5 h-5"></i>
+            </span>
+            <div class="min-w-0">
+                <p class="text-xs sm:text-sm text-base-content/50 truncate">Heaviest lift</p>
+                <p class="text-xl sm:text-2xl font-bold tracking-tight">{{ stats.heaviest_lift|int }}<span class="text-sm font-medium text-base-content/50 ml-1">kg</span></p>
+            </div>
+        </div>
+    </div>
+    <div class="card-panel p-4 sm:p-5 transition hover:-translate-y-0.5">
+        <div class="flex items-center gap-3">
+            <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/15 text-primary shrink-0">
+                <i data-lucide="calendar-days" class="w-5 h-5"></i>
+            </span>
+            <div class="min-w-0">
+                <p class="text-xs sm:text-sm text-base-content/50 truncate">This week</p>
+                <p class="text-xl sm:text-2xl font-bold tracking-tight">{{ stats.workouts_this_week }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="card-panel p-4 sm:p-5 transition hover:-translate-y-0.5">
+        <div class="flex items-center gap-3">
+            <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/15 text-primary shrink-0">
+                <i data-lucide="activity" class="w-5 h-5"></i>
+            </span>
+            <div class="min-w-0">
+                <p class="text-xs sm:text-sm text-base-content/50 truncate">Total volume</p>
+                <p class="text-xl sm:text-2xl font-bold tracking-tight">{{ "{:,.0f}".format(stats.total_volume) }}<span class="text-sm font-medium text-base-content/50 ml-1">kg</span></p>
+            </div>
+        </div>
+    </div>
+</div>
